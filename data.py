@@ -18,6 +18,8 @@ def set_date(df):
 def retrieve_data(stock, interval):
     ticker = yf.Ticker(stock)
     df = ticker.history(interval=interval)
+    if df.empty:
+        raise NameError
     df.reset_index(inplace=True)
     df = set_date(df)
     df['Open'] = round(df['Open'] * 100) / 100
