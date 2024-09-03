@@ -2,17 +2,15 @@ import pandas as pd
 from data import *
 from candle import *
 
-stock = 'ABEV3.SA'
+num_stocks = int(input("How many stocks to analyze? "))
 interval = '1d'
-df = retrieve_data(stock, interval)
-
-sma = int(input("Enter a simple moving average: "))
-df[f'{sma} simple moving average'] = df['Close'].rolling(sma).mean().round(2)
-ema = int(input("Enter a exponential moving average: "))
-df[f'{ema} exp moving average'] = df['Close'].ewm(ema).mean().round(2)
-
-candles = [Candle(df.loc[0], sma=sma, ema=ema)]
-print(candles[0])
-for c in range(1, len(df)):
-    candles.append(Candle(df.loc[c], df.loc[c - 1], sma=sma, ema=ema))
-    print(candles[c])
+stocks = []
+df = []
+candles = []
+for i in range(num_stocks):
+    stocks.append(input("Choose a stock: ").upper() + '.SA')
+    df.append(retrieve_data(stocks[i], interval))
+    candles.append([Candle(self_data=df[i].loc[0])])
+    for c in range(1, len(df[i])):
+        candles[i].append(Candle(self_data=df[i].loc[c], prev_data=df[i].loc[c - 1]))
+    print(f"{stocks[i]} processed")
