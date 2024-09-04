@@ -1,4 +1,5 @@
 import yfinance as yf
+from candle import Candle
 
 
 def set_date(df):
@@ -15,7 +16,7 @@ def set_date(df):
     return df
 
 
-def retrieve_data(stock, interval):
+def retrieve_stock_data(stock, interval):
     ticker = yf.Ticker(stock)
     df = ticker.history(interval=interval)
     if df.empty:
@@ -26,3 +27,25 @@ def retrieve_data(stock, interval):
     df['Close'] = round(df['Close'] * 100) / 100
     df.drop('Stock Splits', axis=1, inplace=True)
     return df
+
+
+def read_stocks(num_stocks, market):
+    interval = '1d'
+    stocks = []
+    df = []
+    candles = []
+    i = 0
+    while i < num_stocks:
+        try:
+            stocks.append(input("Choose a stock: ").upper() + ('.SA' if market == 1 else ""))
+            df.append(retrieve_stock_data(stocks[i], interval))
+        except NameError:
+            print("Invalid stock name. Please try again.")
+            stocks.pop()
+            continue
+        candles.append([Candle(self_data=df[i].loc[0])])
+        for c in range(1, len(df[i])):
+            candles[i].append(Candle(self_data=df[i].loc[c], prev_data=df[i].loc[c - 1]))
+        print(f"{stocks[i]} processed")
+        i += 1
+    return candles
